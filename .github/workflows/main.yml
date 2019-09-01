@@ -15,7 +15,7 @@ jobs:
         sudo apt-get -y install gcc unzip wget zip gcc-avr binutils-avr avr-libc dfu-programmer dfu-util gcc-arm-none-eabi binutils-arm-none-eabi libnewlib-arm-none-eabi
     - name: Update QMK Firmware
       run: |
-        git submodule pull
+        git submodule update --init
         cd qmk_firmware && make git-submodule
     - name: Link custom keymap definition
       run: ln -s ./crkbd-custom qmk_firmware/keyboards/crkbd/activars
