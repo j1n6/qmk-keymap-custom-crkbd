@@ -18,6 +18,6 @@ jobs:
         git submodule update --init
         cd qmk_firmware && make git-submodule
     - name: Link custom keymap definition
-      run: ln -s ./crkbd-custom qmk_firmware/keyboards/crkbd/activars
+      run: ln -s $(pwd)/crkbd-custom $(pwd)/qmk_firmware/keyboards/crkbd/keymaps/activars
     - name: Build firmware hex distribution
       run: cd qmk_firmware && make crkbd:activars
