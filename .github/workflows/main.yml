@@ -24,5 +24,5 @@ jobs:
       
     - uses: actions/upload-artifact@master
       with:
-        name: firmware-hex
-        path: qmk_firmware/*.hex
+        name: crkbd_rev1_activars.hex
+        path: qmk_firmware/crkbd_rev1_activars.hex
