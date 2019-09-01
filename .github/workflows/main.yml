@@ -13,7 +13,11 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get -y install gcc unzip wget zip gcc-avr binutils-avr avr-libc dfu-programmer dfu-util gcc-arm-none-eabi binutils-arm-none-eabi libnewlib-arm-none-eabi
-    - name: Run a multi-line script
+    - name: Update QMK Firmware
       run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+        git submodule update
+        cd qmk_firmware && make git-submodule
+    - name: Link custom keymap definition
+      run: ln -s ./crkbd-custom qmk_firmware/keyboards/crkbd/activars
+    - name: Build firmware hex distribution
+      run: cd qmk_firmware && make crkbd:activars
