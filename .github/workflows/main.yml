@@ -8,9 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    #- uses: actions/checkout@v1
-    - name: Run a one-line script
-      run: echo Hello, world!
+    - uses: actions/checkout@master
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install gcc unzip wget zip gcc-avr binutils-avr avr-libc dfu-programmer dfu-util gcc-arm-none-eabi binutils-arm-none-eabi libnewlib-arm-none-eabi
     - name: Run a multi-line script
       run: |
         echo Add other actions to build,
