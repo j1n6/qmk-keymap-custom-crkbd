@@ -23,6 +23,6 @@ jobs:
       run: cd qmk_firmware && make crkbd:activars
       
     - uses: actions/upload-artifact@master
-    with:
-      name: firmware-hex
-      path: qmk_firmware/*.hex
+      with:
+        name: firmware-hex
+        path: qmk_firmware/*.hex
