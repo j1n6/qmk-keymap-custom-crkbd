@@ -61,6 +61,13 @@ enum macro_keycodes {
 #define KC_D_LT     KC_LEFT
 #define KC_D_RT     KC_RIGHT
 
+// MacOS
+#define KC_MVLD     KC__VOLDOWN
+#define KC_MVLU     KC__VOLUP
+#define KC_MVLM     KC__MUTE
+
+
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_QWERTY] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
@@ -70,7 +77,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
        LSFT,     Z,     X,     C,     V,     B,                      N,     M,  COMM,   DOT,  SLSH,  RSFT,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+                                  LOWER, GUIEI,   SPC,      ENT, ALTKN, RAISE \
                               //`--------------------'  `--------------------'
   ),
 
@@ -82,7 +89,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
        LSFT,    F1,    F2,    F3,    F4,    F5,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+                                  LOWER, GUIEI,   SPC,      ENT, ALTKN, RAISE \
                               //`--------------------'  `--------------------'
   ),
 
@@ -94,19 +101,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
        LSFT, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,                   UNDS,  PLUS,  LBRC,  RBRC,  BSLS,  TILD,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+                                  LOWER, GUIEI,   SPC,      ENT, ALTKN, RAISE \
                               //`--------------------'  `--------------------'
   ),
 
   [_ADJUST] = LAYOUT_kc( \
   //,-----------------------------------------.                ,-----------------------------------------.
-        RST,  LRST, XXXXX, XXXXX, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
+        RST,  LRST, XXXXX, XXXXX, XXXXX, XXXXX,                  XXXXX, XXXXX,  MFFD,  MRWD, XXXXX,  EJCT,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LTOG,  LHUI,  LSAI,  LVAI, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
+       LTOG,  LHUI,  LSAI,  LVAI, XXXXX, XXXXX,                   LEFT,  DOWN,    UP, RIGHT, XXXXX,   INS,\
   //|------+------+------+------+------+------|                |------+------+------+------+------+------|
-       LMOD,  LHUD,  LSAD,  LVAD, XXXXX, XXXXX,                  XXXXX, XXXXX, XXXXX, XXXXX, XXXXX, XXXXX,\
+       LMOD,  LHUD,  LSAD,  LVAD, XXXXX, XXXXX,                   BRMU,  BRMD,  MVLU,  MVLD,  MVLM,  MPLY,\
   //|------+------+------+------+------+------+------|  |------+------+------+------+------+------+------|
-                                  GUIEI, LOWER,   SPC,      ENT, RAISE, ALTKN \
+                                  LOWER, GUIEI,   SPC,      ENT, ALTKN, RAISE\
                               //`--------------------'  `--------------------'
   )
 };
@@ -141,16 +148,71 @@ void matrix_init_user(void) {
 #ifdef SSD1306OLED
 
 // When add source files to SRC in rules.mk, you can use functions.
-const char *read_layer_state(void);
+// const char *read_layer_state(void);
+char matrix_line_str[24];
+const char *read_layer_state(void) {
+  uint8_t layer = biton32(layer_state);
+  strcpy(matrix_line_str, "Layer: ");
+  
+  switch (layer)
+  {
+    case _QWERTY:
+      strcat(matrix_line_str, "Default");
+      break;
+    case _LOWER:
+      strcat(matrix_line_str, "Lower");
+      break;
+    case _RAISE:
+      strcat(matrix_line_str, "Raise");
+      break;
+    case _ADJUST:
+      strcat(matrix_line_str, "Adjust");
+      break;
+    default:
+      sprintf(matrix_line_str + strlen(matrix_line_str), "Unknown (%d)", layer);
+  }
+
+  return matrix_line_str;
+}
+
+const char *read_usb_state(void) {
+  strcpy(matrix_line_str, "USB  : ");
+  
+  switch (USB_DeviceState) {
+    case DEVICE_STATE_Unattached:
+      strcat(matrix_line_str, "Unattached");
+      break;
+    case DEVICE_STATE_Suspended:
+      strcat(matrix_line_str, "Suspended");
+      break;
+    case DEVICE_STATE_Configured:
+      strcat(matrix_line_str, "Connected");
+      break;
+    case DEVICE_STATE_Powered:
+      strcat(matrix_line_str, "Powered");
+      break;
+    case DEVICE_STATE_Default:
+      strcat(matrix_line_str, "Default");
+      break;
+    case DEVICE_STATE_Addressed:
+      strcat(matrix_line_str, "Addressed");
+      break;
+    default:
+      strcat(matrix_line_str, "Invalid");
+  }
+
+  return matrix_line_str;
+}
+
 const char *read_logo(void);
 void set_keylog(uint16_t keycode, keyrecord_t *record);
 const char *read_keylog(void);
 const char *read_keylogs(void);
 
 // const char *read_mode_icon(bool swap);
-// const char *read_host_led_state(void);
-// void set_timelog(void);
-// const char *read_timelog(void);
+const char *read_host_led_state(void);
+void set_timelog(void);
+const char *read_timelog(void);
 
 void matrix_scan_user(void) {
    iota_gfx_task();
@@ -160,10 +222,10 @@ void matrix_render_user(struct CharacterMatrix *matrix) {
   if (is_master) {
     // If you want to change the display of OLED, you need to change here
     matrix_write_ln(matrix, read_layer_state());
-    matrix_write_ln(matrix, read_keylog());
+    matrix_write_ln(matrix, read_usb_state());
     matrix_write_ln(matrix, read_keylogs());
     //matrix_write_ln(matrix, read_mode_icon(keymap_config.swap_lalt_lgui));
-    //matrix_write_ln(matrix, read_host_led_state());
+    // matrix_write_ln(matrix, read_host_led_state());
     //matrix_write_ln(matrix, read_timelog());
   } else {
     matrix_write(matrix, read_logo());
