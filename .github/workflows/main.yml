@@ -22,7 +22,16 @@ jobs:
     - name: Build firmware hex distribution
       run: cd qmk_firmware && make crkbd:activars
       
-    - uses: actions/upload-artifact@master
+    - name: Upload artifact
+      uses: actions/upload-artifact@master
       with:
         name: crkbd_rev1_activars.hex
         path: qmk_firmware/crkbd_rev1_activars.hex
+    
+    - name: Release
+      uses: docker://softprops/action-gh-release
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: qmk_firmware/crkbd_rev1_activars.hex
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
