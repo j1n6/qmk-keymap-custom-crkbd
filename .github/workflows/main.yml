@@ -1,0 +1,37 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@master
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install gcc unzip wget zip gcc-avr binutils-avr avr-libc dfu-programmer dfu-util gcc-arm-none-eabi binutils-arm-none-eabi libnewlib-arm-none-eabi
+    - name: Update QMK Firmware
+      run: |
+        git submodule update --init
+        cd qmk_firmware && make git-submodule
+    - name: Link custom keymap definition
+      run: ln -s $(pwd)/crkbd-custom $(pwd)/qmk_firmware/keyboards/crkbd/keymaps/activars
+    - name: Build firmware hex distribution
+      run: cd qmk_firmware && make crkbd:activars
+      
+    - name: Upload artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: crkbd_rev1_activars.hex
+        path: qmk_firmware/crkbd_rev1_activars.hex
+    
+    - name: Release
+      uses: docker://softprops/action-gh-release
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: qmk_firmware/crkbd_rev1_activars.hex
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
