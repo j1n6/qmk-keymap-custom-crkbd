@@ -342,10 +342,10 @@ void matrix_scan_user(void) {
 
     SEQ_ONE_KEY(KC_H) {
       // using leader key for quick # sign
-      SEND_STRING("\u0023");
+      send_unicode_string("#");
     }
     SEQ_TWO_KEYS(KC_K, KC_R) {
-      SEND_STRING("Kind Regards / &#23452;&#12375;&#12367;&#12362;&#39000;&#12356;&#33268;&#12375;&#12414;&#12377;, \r\nJing");
+      send_unicode_string("Kind Regards / 宜しくお願い致します, \r\nJing");
     }
     // SEQ_TWO_KEYS(KC_D, KC_D) {
     //   SEND_STRING(SS_LCTL("a") SS_LCTL("c"));
