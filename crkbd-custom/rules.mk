@@ -5,4 +5,5 @@ NKRO_ENABLE        = no
 OLED_DRIVER_ENABLE = yes
 LEADER_ENABLE      = yes
 UNICODE_ENABLE     = yes
-
+MOUSEKEY_ENABLE    = no
+CONSOLE_ENABLE     = no
