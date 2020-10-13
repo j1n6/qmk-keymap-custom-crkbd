@@ -32,6 +32,6 @@ jobs:
       uses: docker://softprops/action-gh-release
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: qmk_firmware/crkbd_rev1_activars.hex
+        files: qmk_firmware/crkbd_rev1_legacy_activars.hex
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
