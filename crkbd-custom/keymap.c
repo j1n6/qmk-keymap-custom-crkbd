@@ -345,7 +345,7 @@ void matrix_scan_user(void) {
       SEND_STRING("#");
     }
     SEQ_TWO_KEYS(KC_K, KC_R) {
-      SEND_STRING("Kind Regards, Jing");
+      SEND_STRING("Kind Regards / 宜しくお願い致します, \r\n Jing");
     }
     // SEQ_TWO_KEYS(KC_D, KC_D) {
     //   SEND_STRING(SS_LCTL("a") SS_LCTL("c"));
