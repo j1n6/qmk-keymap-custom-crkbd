@@ -345,7 +345,7 @@ void matrix_scan_user(void) {
       send_unicode_hex_string("0023");
     }
     SEQ_TWO_KEYS(KC_K, KC_R) {
-      send_unicode_hex_string("004B 0069 006E 0064 0020 0052 0065 0067 0061 0072 0064 0073 0020 002F 0020 5B9C 3057 304F 304A 9858 3044 81F4 3057 307E 3059 002C 0020");
+      send_unicode_hex_string("004B 0069 006E 0064 0020 0052 0065 0067 0061 0072 0064 0073 0020 002F 0020 5B9C 3057 304F 304A 9858 3044 81F4 3057 307E 3059");
       SEND_STRING("\nJing");
     }
     // SEQ_TWO_KEYS(KC_D, KC_D) {
