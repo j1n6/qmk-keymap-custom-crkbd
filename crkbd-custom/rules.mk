@@ -4,5 +4,5 @@ MOUSEKEY_ENABLE    = no
 NKRO_ENABLE        = yes
 OLED_DRIVER_ENABLE = yes
 LEADER_ENABLE      = yes
-UNICODE_ENABLE     = yes
+# UNICODE_ENABLE     = yes
 
