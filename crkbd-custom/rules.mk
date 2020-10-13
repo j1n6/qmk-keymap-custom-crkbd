@@ -1,8 +1,8 @@
 RGBLIGHT_ENABLE    = no
 RGB_MATRIX_ENABLE  = WS2812
 MOUSEKEY_ENABLE    = no
-NKRO_ENABLE        = yes
+NKRO_ENABLE        = no
 OLED_DRIVER_ENABLE = yes
 LEADER_ENABLE      = yes
-# UNICODE_ENABLE     = yes
+UNICODE_ENABLE     = yes
 
