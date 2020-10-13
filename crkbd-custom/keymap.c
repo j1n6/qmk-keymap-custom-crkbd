@@ -88,7 +88,7 @@ CTL_T(KC_TAB),  KC_A,  KC_S,  KC_D,  KC_F,  KC_G,                   KC_H,  KC_J,
  *                        '--------------------'                   '--------------------'
  */
   [_RAISE] = LAYOUT(
-   _______, KC_EXLM, KC_AT,   KC_LCBR, KC_RCBR, KC_PIPE,        _______, KC_UNDS, ALGR(KC_5),_______,_______,KC_BSLS,
+   _______, KC_EXLM, KC_AT,   KC_LCBR, KC_RCBR, KC_PIPE,        KC_NUHS, KC_UNDS, ALGR(KC_5),_______,_______,KC_BSLS,
    _______, KC_HASH, KC_DLR,  KC_LPRN, KC_RPRN, KC_GRV,         KC_PLUS, KC_MINS, KC_SLSH, KC_ASTR, KC_PERC, KC_QUOT,
    _______, KC_PERC, KC_CIRC, KC_LBRC, KC_RBRC, KC_TILD,        KC_AMPR, KC_EQL,  KC_COMM, KC_DOT,  KC_SLSH, KC_MINS,
                           _______, _______, _______,        _______, _______, _______

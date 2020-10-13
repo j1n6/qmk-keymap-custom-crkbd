@@ -25,8 +25,8 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@master
       with:
-        name: crkbd_rev1_activars.hex
-        path: qmk_firmware/crkbd_rev1_activars.hex
+        name: crkbd_rev1_legacy_activars.hex
+        path: qmk_firmware/crkbd_rev1_legacy_activars.hex
     
     - name: Release
       uses: docker://softprops/action-gh-release
