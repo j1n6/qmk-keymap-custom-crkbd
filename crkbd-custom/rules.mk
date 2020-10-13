@@ -7,3 +7,4 @@ LEADER_ENABLE      = yes
 UNICODE_ENABLE     = yes
 MOUSEKEY_ENABLE    = no
 CONSOLE_ENABLE     = no
+EXTRAFLAGS += -flto
