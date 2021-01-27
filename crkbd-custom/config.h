@@ -24,13 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* Select hand configuration */
 
-#define MASTER_LEFT
-// #define MASTER_RIGHT
+// #define MASTER_LEFT
+#define MASTER_RIGHT
 // #define EE_HANDS
 
-// #define SSD1306OLED
 #undef USE_I2C
-#undef SSD1306OLED
+// #undef SSD1306OLED
 
 #define USE_SERIAL_PD2
 
@@ -109,3 +108,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #   define DISABLE_RGB_MATRIX_SOLID_SPLASH
 #   define DISABLE_RGB_MATRIX_SOLID_MULTISPLASH
 #endif
+
+
+#define TRACKBALL_RIGHT
+// #ifdef TRACKBALL_RIGHT
+//     #define PIMORONI_TRACKBALL_INVERT_X
+//     #define PIMORONI_TRACKBALL_INVERT_Y
+// #endif

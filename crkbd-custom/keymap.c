@@ -1,6 +1,10 @@
 #include QMK_KEYBOARD_H
 #include "keymap_us_international.h"
 
+// trackball 
+#include "pimoroni_trackball.h"
+#include "pointing_device.h"
+
 extern keymap_config_t keymap_config;
 
 #ifdef RGBLIGHT_ENABLE
@@ -11,6 +15,7 @@ extern rgblight_config_t rgblight_config;
 #ifdef OLED_DRIVER_ENABLE
 static uint32_t oled_timer = 0;
 #endif
+
 
 extern uint8_t is_master;
 
@@ -23,7 +28,8 @@ enum layers {
   _LOWER,
   _RAISE,
   _ADJUST,
-  _NAV
+  _NAV,
+  _TRKBALL,
 };
 
 // Custom keycodes for layer keys
@@ -37,8 +43,21 @@ enum custom_keycodes {
   RAISE,
   ADJUST,
   NAV,
+  TRKBALL,
   RGBRST,
-  KC_RACL // right alt / colon
+  
+  
+  KC_RACL, // right alt / colon
+
+  BALL_HUI,//cycles hue
+  BALL_WHT,//cycles white
+  BALL_DEC,//decreased color
+
+  BALL_LAY,
+  BALL_SRL, // scroll
+  BALL_NCL,//left click
+  BALL_RCL,//right click
+  BALL_MCL,//middle click
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -48,9 +67,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|------+------+------+------+------+------|                |------+------+-------+------+-------+--------|
 CTL_T(KC_TAB),  KC_A,  KC_S,  KC_D,  KC_F,  KC_G,                   KC_H,  KC_J,  KC_K,  KC_L, KC_SCLN,KC_QUOT,
   //|------+------+------+------+------+------|                |------+------+-------+------+-------+--------|
-    KC_LSPO,  KC_Z,  KC_X,  KC_C,  KC_V,  KC_B,                   KC_N,  KC_M,KC_COMM,KC_DOT,KC_SLSH,   NAV,
+  TRKBALL, KC_Z,  KC_X,  KC_C,  KC_V,  KC_B,                   KC_N,  KC_M,KC_COMM,KC_DOT,KC_SLSH,   NAV,
   //|------+------+------+------+------+------+------|  |------+------+------+-------+------+-------+--------|
-                KC_LGUI, LOWER, MT(MOD_LSFT, KC_SPC),   MT(MOD_LALT, KC_ENT), RAISE, KC_LEAD
+                KC_LGUI, LOWER, MT(MOD_LSFT, KC_SPC),   MT(MOD_LALT, KC_ENT), RAISE, KC_BTN1
                               //`--------------------'  `--------------------'
   ),
 
@@ -108,14 +127,23 @@ CTL_T(KC_TAB),  KC_A,  KC_S,  KC_D,  KC_F,  KC_G,                   KC_H,  KC_J,
   ),
 
   [_NAV] = LAYOUT(
-      _______, _______, _______, _______, _______, _______,                      KC_PGUP, KC_HOME, KC_UP,   KC_END,  _______, KC_SLCK,
-CTL_T(KC_TAB), _______, _______, _______, _______, _______,                      KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT, _______, KC_CAPS,
+      _______, _______, _______, _______, _______, _______,                      KC_WH_D, KC_HOME, KC_UP,   KC_END,  _______, KC_SLCK,
+CTL_T(KC_TAB), _______, _______, _______, _______, _______,                      KC_WH_U, KC_LEFT, KC_DOWN, KC_RGHT, _______, KC_CAPS,
       _______, _______, _______, _______, _______, _______,                      _______, _______, _______, _______, _______, _______,
                                           _______, _______, _______,    _______, _______, _______
+  ),
+
+  [_TRKBALL] = LAYOUT(
+      _______, _______, _______, _______, _______, _______,                       _______, _______, _______, _______,  _______, _______,
+      _______, _______, BALL_SRL, _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
+      _______, _______, _______, _______, _______, _______,                       _______, _______, _______, _______, _______, _______,
+                                         _______, _______, BALL_NCL,    BALL_RCL, _______, _______
   )
+
 };
 
 int RGB_current_mode;
+
 
 // Setting ADJUST layer RGB back to default
 void update_tri_layer_RGB(uint8_t layer1, uint8_t layer2, uint8_t layer3) {
@@ -311,7 +339,9 @@ void render_layer_state(void) {
         oled_write_P(raise_layer, false);
     } else if(layer_state_is(_NAV)) {
         oled_write_P(nav_layer, false);
-    } else {
+    } else if(layer_state_is(_TRKBALL)) {
+        oled_write_P(nav_layer, false);
+    }else {
       oled_write_P(default_layer, false);
     }
 }
@@ -409,30 +439,56 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
     case ADJUST:
-        if (record->event.pressed) {
-          layer_on(_ADJUST);
-        } else {
-          layer_off(_ADJUST);
-        }
-        return false;
+      if (record->event.pressed) {
+        layer_on(_ADJUST);
+      } else {
+        layer_off(_ADJUST);
+      }
+      return false;
     case NAV:
-        if (record->event.pressed) {
-          layer_on(_NAV);
-        } else {
-          layer_off(_NAV);
-        }
-        return false;
+      if (record->event.pressed) {
+        layer_on(_NAV);
+        trackball_set_scrolling(true);
+      } else {
+        layer_off(_NAV);
+        trackball_set_scrolling(false);
+      }
+      return false;
+    
+    case BALL_SRL:
+      if(record->event.pressed){
+        trackball_set_scrolling(true);
+      } else{
+        trackball_set_scrolling(false);
+      }
+      return false;
+    case BALL_NCL:
+      record->event.pressed?register_code(KC_BTN1):unregister_code(KC_BTN1);
+      return false;
+    case BALL_RCL:
+      record->event.pressed?register_code(KC_BTN2):unregister_code(KC_BTN2);
+      return false;
+    case BALL_MCL:
+      record->event.pressed?register_code(KC_BTN3):unregister_code(KC_BTN3);
+      return false;
+    case TRKBALL:
+      if (record->event.pressed) {
+        layer_on(_TRKBALL);
+      } else {
+        layer_off(_TRKBALL);
+      }
+      return false;
     case KC_RACL:
-        if (record->event.pressed) {
-          my_colon_timer = timer_read();
-          register_code(KC_RALT);
-        } else {
-          unregister_code(KC_RALT);
-          if (timer_elapsed(my_colon_timer) < TAPPING_TERM) {
-            SEND_STRING(":"); // Change the character(s) to be sent on tap here
-          }
+      if (record->event.pressed) {
+        my_colon_timer = timer_read();
+        register_code(KC_RALT);
+      } else {
+        unregister_code(KC_RALT);
+        if (timer_elapsed(my_colon_timer) < TAPPING_TERM) {
+          SEND_STRING(":"); // Change the character(s) to be sent on tap here
         }
-        return false;
+      }
+      return false;
     case RGBRST:
       #ifdef RGBLIGHT_ENABLE
         if (record->event.pressed) {
