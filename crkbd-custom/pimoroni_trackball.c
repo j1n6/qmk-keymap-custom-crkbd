@@ -22,7 +22,7 @@ static int16_t x_offset       = 0;
 static int16_t y_offset       = 0;
 static int16_t h_offset       = 0;
 static int16_t v_offset       = 0;
-static float   precisionSpeed = 1.2;
+static float   precisionSpeed = 1;
 
 static uint16_t i2c_timeout_timer;
 
@@ -76,23 +76,23 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
 
     if (!process_record_user(keycode, record)) { return false; }
 
-    /* If Mousekeys is disabled, then use handle the mouse button
-    * keycodes.  This makes things simpler, and allows usage of
-    * the keycodes in a consistent manner.  But only do this if
-    * Mousekeys is not enable, so it's not handled twice.
-    */
-    #ifndef MOUSEKEY_ENABLE
-        if (IS_MOUSEKEY_BUTTON(keycode)) {
-            report_mouse_t currentReport = pointing_device_get_report();
-            if (record->event.pressed) {
-                currentReport.buttons |= 1 << (keycode - KC_MS_BTN1);
-            } else {
-                currentReport.buttons &= ~(1 << (keycode - KC_MS_BTN1));
-            }
-            pointing_device_set_report(currentReport);
-            pointing_device_send();
+/* If Mousekeys is disabled, then use handle the mouse button
+ * keycodes.  This makes things simpler, and allows usage of
+ * the keycodes in a consistent manner.  But only do this if
+ * Mousekeys is not enable, so it's not handled twice.
+ */
+#ifndef MOUSEKEY_ENABLE
+    if (IS_MOUSEKEY_BUTTON(keycode)) {
+        report_mouse_t currentReport = pointing_device_get_report();
+        if (record->event.pressed) {
+            currentReport.buttons |= 1 << (keycode - KC_MS_BTN1);
+        } else {
+            currentReport.buttons &= ~(1 << (keycode - KC_MS_BTN1));
         }
-    #endif
+        pointing_device_set_report(currentReport);
+        pointing_device_send();
+    }
+#endif
 
     return true;
 }
@@ -112,7 +112,6 @@ void  trackball_set_precision(float precision) { precisionSpeed = precision; }
 bool  trackball_is_scrolling(void) { return scrolling; }
 void  trackball_set_scrolling(bool scroll) { scrolling = scroll; }
 
-bool has_report_changed(report_mouse_t first, report_mouse_t second) { return !((!first.buttons && first.buttons == second.buttons) && (!first.x && first.x == second.x) && (!first.y && first.y == second.y) && (!first.h && first.h == second.h) && (!first.v && first.v == second.v)); }
 
 __attribute__((weak)) void pointing_device_init(void) { trackball_set_rgbw(0x80, 0x00, 0x00, 0x00); }
 
@@ -174,7 +173,5 @@ void pointing_device_task(void) {
     update_member(&mouse.v, &h_offset);
 #endif
     pointing_device_set_report(mouse);
-    if (has_report_changed(mouse, pointing_device_get_report())) {
-        pointing_device_send();
-    }
+    pointing_device_send();
 }
